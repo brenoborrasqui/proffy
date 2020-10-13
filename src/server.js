@@ -1,20 +1,24 @@
-const prroffys = []
-
-
+//Servidor
 const express = require("express")
 const server = express()
 
-server.use(express.static("public"))
+const {pageLanding, pageStudy, pageGiveClasses, saveClasses} = require("./pages")
 
-.get("/", (req, res) => {
-     return res.sendFile(__dirname + '/views/index.html')
-})
-.get("/study", (req,res) => {
-    return res.sendFile(__dirname + '/views/study.html')
-})
-.get("/give-classes", (req,res) => {
-    return res.sendFile(__dirname + '/views/give-classes.html')
+//configurar nunjucks
+const nunjucks = require("nunjucks")
+nunjucks.configure("src/views",{
+    express: server,
+    noCache: true,
 })
 
+server
+//receber os dados do req.body
+.use(express.urlencoded({extended:true}))
+//configurar arquivos estaticos(css ,scripts, imagens)
+.use(express.static("public"))
+// rotas da aplicação
+.get("/", pageLanding ) 
+.get("/study", pageStudy )
+.get("/give-classes", pageGiveClasses)
+.post("/save-classes",saveClasses)
 .listen("5500")
-
